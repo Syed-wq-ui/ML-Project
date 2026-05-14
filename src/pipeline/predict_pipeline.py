@@ -10,16 +10,29 @@ class PredictPipeline:
 
     def predict(self, features):
         try:
+            # We use os.path.join to ensure Linux (Render) and Windows both understand the path
             model_path = os.path.join("artifacts", "model.pkl")
-            preprocessor_path = os.path.join('artifacts', 'preprocessor.pkl')
+            preprocessor_path = os.path.join("artifacts", "preprocessor.pkl")
+
+            # Debugging prints - These will show up in your Render Logs
+            print("Checking paths...")
+            if not os.path.exists(model_path):
+                print(f"ERROR: {model_path} not found!")
+            if not os.path.exists(preprocessor_path):
+                print(f"ERROR: {preprocessor_path} not found!")
+
             model = load_object(file_path=model_path)
             preprocessor = load_object(file_path=preprocessor_path)
             
+            print("Files loaded successfully. Scaling data...")
             data_scaled = preprocessor.transform(features)
+            
             preds = model.predict(data_scaled)
             return preds
         
         except Exception as e:
+            # Printing the raw error helps us see the issue on Render instantly
+            print(f"Exception occurred in Prediction: {str(e)}")
             raise CustomException(e, sys)
 
 class CustomData:
@@ -32,7 +45,6 @@ class CustomData:
         reading_score: int,
         writing_score: int):
 
-        # These are just internal Python variables (underscores are mandatory here)
         self.gender = gender
         self.race_ethnicity = race_ethnicity
         self.parental_level_of_education = parental_level_of_education
@@ -43,9 +55,6 @@ class CustomData:
 
     def get_data_as_data_frame(self):
         try:
-            # THIS IS THE FIX: 
-            # The keys (left side) match your CSV image EXACTLY.
-            # The values (right side) are the internal Python variables.
             custom_data_input_dict = {
                 "gender": [self.gender],
                 "race/ethnicity": [self.race_ethnicity],
