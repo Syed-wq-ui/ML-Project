@@ -1,0 +1,3 @@
+[ 2026-05-15 01:55:13,245 ] 97 werkzeug - WARNING -  * Debugger is active!
+[ 2026-05-15 01:55:13,248 ] 97 werkzeug - INFO -  * Debugger PIN: 291-813-983
+[ 2026-05-15 01:55:22,956 ] 97 werkzeug - INFO -  * Detected change in 'C:\\Users\\KIIT0001\\Desktop\\ML-Projects-1 kn\\application.py', reloading

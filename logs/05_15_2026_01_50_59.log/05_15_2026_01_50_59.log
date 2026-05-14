@@ -1,0 +1,5 @@
+[ 2026-05-15 01:51:00,417 ] 97 werkzeug - WARNING -  * Debugger is active!
+[ 2026-05-15 01:51:00,419 ] 97 werkzeug - INFO -  * Debugger PIN: 291-813-983
+[ 2026-05-15 01:51:01,777 ] 97 werkzeug - INFO - 127.0.0.1 - - [15/May/2026 01:51:01] "GET /predictdata HTTP/1.1" 200 -
+[ 2026-05-15 01:51:14,534 ] 97 werkzeug - INFO - 127.0.0.1 - - [15/May/2026 01:51:14] "POST /predictdata HTTP/1.1" 200 -
+[ 2026-05-15 01:55:09,818 ] 97 werkzeug - INFO -  * Detected change in 'C:\\Users\\KIIT0001\\Desktop\\ML-Projects-1 kn\\application.py', reloading
