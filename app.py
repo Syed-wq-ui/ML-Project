@@ -6,16 +6,20 @@ from src.pipeline.predict_pipeline import CustomData, PredictPipeline
 application = Flask(__name__)
 app = application
 
+## Route for the Welcome/Home Page
 @app.route('/')
 def index():
+    # This renders your first page (the one with the heading)
     return render_template('index.html') 
 
+## Route for the Prediction Page
 @app.route('/predictdata', methods=['GET', 'POST'])
 def predict_datapoint():
     if request.method == 'GET':
+        # This renders your form page
         return render_template('home.html')
     else:
-        # These are ARGUMENT names. They match the __init__ in your pipeline.
+        # Handling the form submission
         data = CustomData(
             gender=request.form.get('gender'),
             race_ethnicity=request.form.get('ethnicity'),
@@ -32,6 +36,7 @@ def predict_datapoint():
         predict_pipeline = PredictPipeline()
         results = predict_pipeline.predict(pred_df)
         
+        # Returns the result back to the same form page
         return render_template('home.html', results=results[0])
 
 if __name__ == "__main__":
