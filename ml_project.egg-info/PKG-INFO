@@ -1,0 +1,11 @@
+Metadata-Version: 2.4
+Name: ml_project
+Version: 0.1
+Author: Farooque
+Author-email: 2306033@kiit.ac.in
+Requires-Dist: numpy
+Requires-Dist: pandas
+Requires-Dist: scikit-learn
+Dynamic: author
+Dynamic: author-email
+Dynamic: requires-dist
