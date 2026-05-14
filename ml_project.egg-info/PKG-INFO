@@ -6,6 +6,10 @@ Author-email: 2306033@kiit.ac.in
 Requires-Dist: numpy
 Requires-Dist: pandas
 Requires-Dist: scikit-learn
+Requires-Dist: seaborn
+Requires-Dist: matplotlib
+Requires-Dist: catboost
+Requires-Dist: xgboost
 Dynamic: author
 Dynamic: author-email
 Dynamic: requires-dist
