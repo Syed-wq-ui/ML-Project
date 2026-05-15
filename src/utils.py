@@ -12,7 +12,7 @@ from src.logger import logging
 
 def save_object(file_path, obj):
     """
-    Saves a python object to a specific path using dill/pickle.
+    Saves a python object to a specific path using dill.
     """
     try:
         dir_path = os.path.dirname(file_path)
@@ -26,8 +26,7 @@ def save_object(file_path, obj):
 
 def evaluate_models(X_train, y_train, X_test, y_test, models, param):
     """
-    Automatically trains multiple models, performs Hyperparameter tuning, 
-    and returns a report of R2 scores.
+    Trains multiple models with Hyperparameter tuning.
     """
     try:
         report = {}
@@ -36,18 +35,13 @@ def evaluate_models(X_train, y_train, X_test, y_test, models, param):
             model = list(models.values())[i]
             para = param[list(models.keys())[i]]
 
-            # Automatic Hyperparameter Tuning (Grid Search)
             gs = GridSearchCV(model, para, cv=3)
             gs.fit(X_train, y_train)
 
-            # Set the model to use the best parameters found
             model.set_params(**gs.best_params_)
             model.fit(X_train, y_train)
 
-            # Make Predictions
             y_test_pred = model.predict(X_test)
-
-            # Get R2 Score for the test data
             test_model_score = r2_score(y_test, y_test_pred)
 
             report[list(models.keys())[i]] = test_model_score
@@ -68,8 +62,20 @@ def model_metrics(true, predicted):
         raise CustomException(e, sys)
 
 def load_object(file_path):
+    """
+    Loads a python object from a specific path. 
+    Added error logging specifically for Render deployment.
+    """
     try:
+        # Debugging log for Render
+        if not os.path.exists(file_path):
+            logging.info(f"File not found at path: {file_path}")
+            raise FileNotFoundError(f"No file found at {file_path}")
+
         with open(file_path, "rb") as file_obj:
             return dill.load(file_obj)
+
     except Exception as e:
+        # This will show the real reason for Error 500 in Render logs
+        logging.error(f"Error in load_object: {str(e)}")
         raise CustomException(e, sys)
