@@ -24,7 +24,7 @@ The app takes inputs like gender, ethnicity, parental education level, lunch typ
 
 ## 🚀 Live Demo
 
-> 🌐 **Deployed on Render** — [Add your live link here]
+> 🌐 **Deployed on Render** — [https://predicted-ps3k.onrender.com/]
 
 ---
 
@@ -211,7 +211,7 @@ artifacts/
 
 ## 🙋 Author
 
-**Your Name**  
+**Syed Md Farooque Ahmed**  
 [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white)](https://github.com/your-username)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://linkedin.com/in/your-profile)
 
