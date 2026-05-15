@@ -1,26 +1,400 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Result — Student Performance Predictor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #080b12;
+      --surface: #0e1420;
+      --border: rgba(99,179,237,0.12);
+      --blue: #63b3ed;
+      --blue-dim: rgba(99,179,237,0.15);
+      --cyan: #4fd1c5;
+      --amber: #f6ad55;
+      --white: #e8edf5;
+      --muted: #5a6478;
+      --good: #68d391;
+      --mid: #f6ad55;
+      --low: #fc8181;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      min-height: 100vh;
+      font-family: 'Outfit', sans-serif;
+      color: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* Stars */
+    .stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+    .star {
+      position: absolute; border-radius: 50%; background: white; opacity: 0;
+      animation: twinkle var(--d) ease-in-out infinite var(--delay);
+    }
+    @keyframes twinkle {
+      0%,100% { opacity: 0; transform: scale(0.8); }
+      50% { opacity: var(--op); transform: scale(1); }
+    }
+
+    /* Aurora */
+    .aurora { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    .aurora::before {
+      content: ''; position: absolute;
+      top: -200px; left: -100px; width: 800px; height: 600px;
+      background: radial-gradient(ellipse, rgba(99,179,237,0.06) 0%, transparent 70%);
+      animation: aMove 16s ease-in-out infinite alternate;
+    }
+    .aurora::after {
+      content: ''; position: absolute;
+      bottom: -200px; right: -100px; width: 700px; height: 500px;
+      background: radial-gradient(ellipse, rgba(79,209,197,0.06) 0%, transparent 70%);
+      animation: aMove 12s ease-in-out infinite alternate-reverse;
+    }
+    @keyframes aMove {
+      0% { transform: translate(0,0) scale(1); }
+      100% { transform: translate(60px,40px) scale(1.15); }
+    }
+
+    /* Layout */
+    .page { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 40px 28px 80px; }
+
+    /* Topbar */
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 48px;
+      opacity: 0; animation: fadeUp 0.6s ease forwards 0.1s;
+    }
+    .topbar-brand { display: flex; align-items: center; gap: 10px; }
+    .brand-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--cyan); box-shadow: 0 0 12px var(--cyan);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 8px var(--cyan); }
+      50% { box-shadow: 0 0 22px var(--cyan); }
+    }
+    .brand-name { font-size: 12px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 20px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 12px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase;
+      color: var(--muted); text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .back-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-dim); }
+
+    /* Hero grid */
+    .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+
+    /* Score card */
+    .score-card {
+      background: linear-gradient(135deg, rgba(99,179,237,0.07), rgba(79,209,197,0.03));
+      border: 1px solid rgba(99,179,237,0.22);
+      border-radius: 24px; padding: 44px 40px;
+      display: flex; flex-direction: column; justify-content: center;
+      position: relative; overflow: hidden;
+      opacity: 0; animation: fadeUp 0.7s ease forwards 0.3s;
+    }
+    .score-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--blue), var(--cyan));
+    }
+    .score-card::after {
+      content: attr(data-score);
+      position: absolute; right: -10px; bottom: -20px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 180px; font-weight: 700;
+      color: rgba(99,179,237,0.04);
+      line-height: 1; pointer-events: none; user-select: none;
+    }
+    .score-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 3px; color: var(--blue); margin-bottom: 16px; }
+    .score-number {
+      font-family: 'Cormorant Garamond', serif; font-size: 96px; font-weight: 700; line-height: 1;
+      background: linear-gradient(135deg, var(--white), var(--blue));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: 8px;
+    }
+    .score-denom { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+    .grade-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 18px; border-radius: 100px;
+      font-size: 13px; font-weight: 600; letter-spacing: 1px; width: fit-content;
+    }
+    .grade-badge.excellent { background: rgba(104,211,145,0.12); border: 1px solid rgba(104,211,145,0.3); color: var(--good); }
+    .grade-badge.good      { background: rgba(99,179,237,0.12); border: 1px solid rgba(99,179,237,0.3); color: var(--blue); }
+    .grade-badge.average   { background: rgba(246,173,85,0.12); border: 1px solid rgba(246,173,85,0.3); color: var(--mid); }
+    .grade-badge.needs     { background: rgba(252,129,129,0.12); border: 1px solid rgba(252,129,129,0.3); color: var(--low); }
+
+    /* Gauge card */
+    .gauge-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 24px;
+      padding: 40px 36px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      opacity: 0; animation: fadeUp 0.7s ease forwards 0.45s;
+    }
+    .gauge-wrap { position: relative; width: 220px; height: 130px; margin-bottom: 24px; }
+    .gauge-svg { width: 220px; height: 130px; overflow: visible; }
+    .gauge-track { fill: none; stroke: rgba(255,255,255,0.05); stroke-width: 14; stroke-linecap: round; }
+    .gauge-fill {
+      fill: none; stroke: url(#gaugeGrad); stroke-width: 14; stroke-linecap: round;
+      stroke-dasharray: 283; stroke-dashoffset: 283;
+      transition: stroke-dashoffset 1.6s cubic-bezier(0.4,0,0.2,1);
+    }
+    .gauge-center {
+      position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); text-align: center;
+    }
+    .gauge-pct { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 700; color: var(--white); line-height: 1; }
+    .gauge-pct-label { font-size: 11px; color: var(--muted); letter-spacing: 1px; }
+    .gauge-legend { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* Stats row */
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
+      padding: 24px; position: relative; overflow: hidden; opacity: 0;
+    }
+    .stat-card:nth-child(1) { animation: fadeUp 0.6s ease forwards 0.6s; }
+    .stat-card:nth-child(2) { animation: fadeUp 0.6s ease forwards 0.72s; }
+    .stat-card:nth-child(3) { animation: fadeUp 0.6s ease forwards 0.84s; }
+    .stat-icon { font-size: 22px; margin-bottom: 14px; }
+    .stat-value { font-family: 'Cormorant Garamond', serif; font-size: 34px; font-weight: 700; color: var(--white); line-height: 1; margin-bottom: 4px; }
+    .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); }
+    .stat-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; }
+
+    /* Insights */
+    .insight-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
+      padding: 28px; opacity: 0; animation: fadeUp 0.6s ease forwards 0.96s;
+    }
+    .insight-title { font-size: 11px; text-transform: uppercase; letter-spacing: 3px; color: var(--muted); margin-bottom: 20px; }
+    .insight-list { display: flex; flex-direction: column; gap: 10px; }
+    .insight-item {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.02);
+      border-radius: 12px; border-left: 3px solid transparent;
+      transition: background 0.2s; opacity: 0;
+    }
+    .insight-item:hover { background: rgba(255,255,255,0.04); }
+    .insight-icon { font-size: 18px; flex-shrink: 0; padding-top: 2px; }
+    .insight-text { font-size: 14px; color: rgba(232,237,245,0.8); line-height: 1.6; }
+    .insight-text strong { color: var(--white); font-weight: 600; }
+
+    /* CTA */
+    .cta-row { display: flex; gap: 14px; margin-top: 20px; opacity: 0; animation: fadeUp 0.6s ease forwards 1.1s; }
+    .cta-btn {
+      flex: 1; padding: 15px 24px; border-radius: 14px;
+      font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 500;
+      cursor: pointer; text-decoration: none; text-align: center; border: none;
+      transition: all 0.25s ease; display: block;
+    }
+    .cta-primary {
+      background: linear-gradient(135deg, #2b6cb0, #3182ce); color: white;
+      box-shadow: 0 4px 20px rgba(49,130,206,0.3);
+    }
+    .cta-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(49,130,206,0.45); }
+    .cta-ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+    .cta-ghost:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-dim); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .hero { grid-template-columns: 1fr; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .score-number { font-size: 72px; }
+    }
+    @media (max-width: 480px) {
+      .stats-row { grid-template-columns: 1fr; }
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
 <body>
-    <div class="login">
-       <h1>Student Exam Performance Indicator</h1>
-   
-       <form action="{{ url_for('predict_datapoint')}}" method="post">
-        <h1>
-            <legend>Student Exam Performance Prediction</legend>
-        </h1>
-        <div class="mb-3">
-            <input class="btn btn-primary" type="submit" value="Predict your Maths Score" />
-        </div>
-    </form>
 
-    {% if results %}
-    <h2 style="color: blue;">
-        THE prediction is: {{results}}
-    </h2>
-    {% endif %}
+  <div class="stars" id="stars"></div>
+  <div class="aurora"></div>
 
-    <br>
-    <a href="/">Back to Welcome Page</a>
+  <div class="page">
 
+    <div class="topbar">
+      <div class="topbar-brand">
+        <div class="brand-dot"></div>
+        <span class="brand-name">Performance Predictor</span>
+      </div>
+      <a href="/" class="back-btn">← New Prediction</a>
     </div>
+
+    <div class="hero">
+      <div class="score-card" id="scoreCard" data-score="{{ results if results else '0' }}">
+        <div class="score-eyebrow">Predicted Maths Score</div>
+        <div class="score-number" id="scoreNum">0</div>
+        <div class="score-denom">out of 100 points</div>
+        <div class="grade-badge" id="gradeBadge">
+          <span id="gradeIcon">◆</span>
+          <span id="gradeText">Calculating...</span>
+        </div>
+      </div>
+
+      <div class="gauge-card">
+        <div class="gauge-wrap">
+          <svg class="gauge-svg" viewBox="0 0 220 130">
+            <defs>
+              <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%"   stop-color="#fc8181"/>
+                <stop offset="40%"  stop-color="#f6ad55"/>
+                <stop offset="75%"  stop-color="#63b3ed"/>
+                <stop offset="100%" stop-color="#68d391"/>
+              </linearGradient>
+            </defs>
+            <path class="gauge-track" d="M 20 115 A 90 90 0 0 1 200 115"/>
+            <path class="gauge-fill"  id="gaugeFill" d="M 20 115 A 90 90 0 0 1 200 115"/>
+          </svg>
+          <div class="gauge-center">
+            <div class="gauge-pct" id="gaugePct">0%</div>
+            <div class="gauge-pct-label">Score</div>
+          </div>
+        </div>
+        <div class="gauge-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#fc8181"></div>Needs Work</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#f6ad55"></div>Average</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#63b3ed"></div>Good</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#68d391"></div>Excellent</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-value" id="statPct">—</div>
+        <div class="stat-label">Percentile Rank</div>
+        <div class="stat-bar" style="background:linear-gradient(90deg,#63b3ed,#4fd1c5)"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-value" id="statGrade">—</div>
+        <div class="stat-label">Letter Grade</div>
+        <div class="stat-bar" style="background:linear-gradient(90deg,#f6ad55,#fc8181)"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📈</div>
+        <div class="stat-value" id="statGap">—</div>
+        <div class="stat-label">Points to Perfect</div>
+        <div class="stat-bar" style="background:linear-gradient(90deg,#68d391,#4fd1c5)"></div>
+      </div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">✦ &nbsp; Performance Insights</div>
+      <div class="insight-list" id="insightList"></div>
+    </div>
+
+    <div class="cta-row">
+      <a href="/" class="cta-btn cta-primary">← Predict Another Student</a>
+      <a href="/" class="cta-btn cta-ghost">Back to Home</a>
+    </div>
+
+  </div>
+
+  <script>
+    /* Stars */
+    const starsEl = document.getElementById('stars');
+    for (let i = 0; i < 120; i++) {
+      const s = document.createElement('div');
+      s.className = 'star';
+      const sz = Math.random() * 2 + 0.5;
+      s.style.cssText = `width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${(Math.random()*4+2).toFixed(1)}s;--delay:-${(Math.random()*6).toFixed(1)}s;--op:${(Math.random()*0.5+0.15).toFixed(2)}`;
+      starsEl.appendChild(s);
+    }
+
+    /* Score */
+    const RAW = parseFloat(document.getElementById('scoreCard').dataset.score) || 0;
+    const score = Math.min(Math.max(Math.round(RAW), 0), 100);
+
+    function animateCount(el, target, suffix, dur) {
+      const start = performance.now();
+      (function tick(now) {
+        const t = Math.min((now - start) / dur, 1);
+        const ease = 1 - Math.pow(1 - t, 3);
+        el.textContent = Math.round(ease * target) + suffix;
+        if (t < 1) requestAnimationFrame(tick);
+      })(performance.now());
+    }
+
+    function getGrade(s) {
+      if (s >= 90) return { letter:'A+', label:'Excellent',  cls:'excellent', icon:'🏆' };
+      if (s >= 80) return { letter:'A',  label:'Very Good',  cls:'good',      icon:'⭐' };
+      if (s >= 70) return { letter:'B',  label:'Good',       cls:'good',      icon:'✅' };
+      if (s >= 60) return { letter:'C',  label:'Average',    cls:'average',   icon:'📘' };
+      if (s >= 50) return { letter:'D',  label:'Below Avg',  cls:'average',   icon:'📙' };
+      return           { letter:'F',  label:'Needs Work', cls:'needs',     icon:'📕' };
+    }
+
+    function getInsights(s) {
+      const main = [
+        { min:80, icon:'🏆', border:'#68d391', text:`<strong>Outstanding performance!</strong> A score of ${s}/100 places this student in the top tier. Consistent effort and strong preparation are clearly paying off.` },
+        { min:65, icon:'⭐', border:'#63b3ed', text:`<strong>Strong result.</strong> ${s}/100 is well above average. Focusing on weaker topic areas could push this into the excellent band.` },
+        { min:50, icon:'📘', border:'#f6ad55', text:`<strong>Solid foundation.</strong> ${s}/100 shows decent understanding. Targeted practice on challenging topics will drive meaningful improvement.` },
+        { min:0,  icon:'📕', border:'#fc8181', text:`<strong>Needs support.</strong> ${s}/100 suggests some foundational gaps. Structured study plans and tutoring sessions are recommended.` },
+      ].find(i => s >= i.min);
+
+      return [
+        main,
+        { icon:'📚', border:'#4fd1c5', text:`<strong>Reading & Writing</strong> are strong co-predictors — students who score above 70 in both subjects tend to perform significantly better in maths too.` },
+        { icon:'🎓', border:'#63b3ed', text:`<strong>Test preparation course</strong> completion is among the highest-impact factors. Students who complete it average <strong>8–12 points higher</strong> on maths.` },
+        { icon:'💡', border:'#f6ad55', text:`<strong>Next steps:</strong> Review the input factors that most influence this score — parental education, lunch type, and test prep — to build a more targeted intervention plan.` },
+      ];
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const grade = getGrade(score);
+
+      // Animate score counter
+      setTimeout(() => animateCount(document.getElementById('scoreNum'), score, '', 1400), 400);
+
+      // Grade badge
+      const badge = document.getElementById('gradeBadge');
+      badge.className = `grade-badge ${grade.cls}`;
+      document.getElementById('gradeIcon').textContent = grade.icon;
+      document.getElementById('gradeText').textContent = grade.label;
+
+      // Gauge — arc path length for r=90 half-circle ≈ π*90 ≈ 282.7
+      const arcLen = Math.PI * 90;
+      const gf = document.getElementById('gaugeFill');
+      gf.style.strokeDasharray = arcLen;
+      gf.style.strokeDashoffset = arcLen;
+      setTimeout(() => { gf.style.strokeDashoffset = arcLen * (1 - score / 100); }, 600);
+      setTimeout(() => animateCount(document.getElementById('gaugePct'), score, '%', 1400), 600);
+
+      // Stat cards
+      setTimeout(() => animateCount(document.getElementById('statPct'), score, 'th', 1200), 700);
+      document.getElementById('statGrade').textContent = grade.letter;
+      document.getElementById('statGap').textContent = `+${100 - score}`;
+
+      // Insights
+      const insights = getInsights(score);
+      const list = document.getElementById('insightList');
+      insights.forEach((ins, i) => {
+        const div = document.createElement('div');
+        div.className = 'insight-item';
+        div.style.borderLeftColor = ins.border;
+        div.style.animation = `fadeUp 0.5s ease forwards ${1.1 + i * 0.12}s`;
+        div.innerHTML = `<span class="insight-icon">${ins.icon}</span><span class="insight-text">${ins.text}</span>`;
+        list.appendChild(div);
+      });
+    });
+  </script>
 </body>
 </html>
