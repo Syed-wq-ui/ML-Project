@@ -12,7 +12,6 @@
         .btn-primary { width: 100%; margin-top: 20px; }
         .result-box { margin-top: 20px; padding: 15px; text-align: center; border-top: 2px solid #eee; }
         .back-link { display: block; text-align: center; margin-top: 15px; color: #666; text-decoration: none; }
-        .back-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -25,7 +24,7 @@
             <div class="mb-3">
                 <label class="form-label">Gender</label>
                 <select class="form-control" name="gender" required>
-                    <option class="placeholder" selected disabled value="">Select your Gender</option>
+                    <option value="" selected disabled>Select your Gender</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                 </select>
@@ -34,7 +33,7 @@
             <div class="mb-3">
                 <label class="form-label">Race or Ethnicity</label>
                 <select class="form-control" name="ethnicity" required>
-                    <option class="placeholder" selected disabled value="">Select Ethnicity</option>
+                    <option value="" selected disabled>Select Ethnicity</option>
                     <option value="group A">Group A</option>
                     <option value="group B">Group B</option>
                     <option value="group C">Group C</option>
@@ -46,60 +45,54 @@
             <div class="mb-3">
                 <label class="form-label">Parental Level of Education</label>
                 <select class="form-control" name="parental_level_of_education" required>
-                    <option class="placeholder" selected disabled value="">Select Parent Education</option>
-                    <option value="associate's degree">associate's degree</option>
-                    <option value="bachelor's degree">bachelor's degree</option>
-                    <option value="high school">high school</option>
-                    <option value="master's degree">master's degree</option>
-                    <option value="some college">some college</option>
-                    <option value="some high school">some high school</option>
+                    <option value="" selected disabled>Select Parent Education</option>
+                    <option value="associate's degree">Associate's degree</option>
+                    <option value="bachelor's degree">Bachelor's degree</option>
+                    <option value="high school">High school</option>
+                    <option value="master's degree">Master's degree</option>
+                    <option value="some college">Some college</option>
+                    <option value="some high school">Some high school</option>
                 </select>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Lunch Type</label>
                 <select class="form-control" name="lunch" required>
-                    <option class="placeholder" selected disabled value="">Select Lunch Type</option>
-                    <option value="free/reduced">free/reduced</option>
-                    <option value="standard">standard</option>
+                    <option value="" selected disabled>Select Lunch Type</option>
+                    <option value="free/reduced">Free/Reduced</option>
+                    <option value="standard">Standard</option>
                 </select>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Test preparation Course</label>
                 <select class="form-control" name="test_preparation_course" required>
-                    <option class="placeholder" selected disabled value="">Select Test_course</option>
+                    <option value="" selected disabled>Select Course Status</option>
                     <option value="none">None</option>
                     <option value="completed">Completed</option>
                 </select>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Reading Score out of 100</label>
-                <input class="form-control" type="number" name="reading_score"
-                    placeholder="Enter your Reading score" min='0' max='100' required />
+                <label class="form-label">Reading Score (0-100)</label>
+                <input class="form-control" type="number" name="reading_score" min='0' max='100' required />
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Writing Score out of 100</label>
-                <input class="form-control" type="number" name="writing_score"
-                    placeholder="Enter your Writing Score" min='0' max='100' required />
+                <label class="form-label">Writing Score (0-100)</label>
+                <input class="form-control" type="number" name="writing_score" min='0' max='100' required />
             </div>
 
             <div class="mb-3">
-                <input class="btn btn-primary" type="submit" value="Predict your Maths Score" />
+                <button class="btn btn-primary" type="submit">Predict your Maths Score</button>
             </div>
         </form>
 
         {% if results %}
         <div class="result-box">
-            <h2 style="color: #007bff;">
-                The Predicted Maths Score is: <strong>{{results}}</strong>
-            </h2>
+            <h2 style="color: #007bff;">Predicted Maths Score: <strong>{{results}}</strong></h2>
         </div>
         {% endif %}
-
-        <a href="/" class="back-link">← Back to Welcome Page</a>
     </div>
 </body>
 </html>
