@@ -5,7 +5,7 @@ Author: Farooque
 Author-email: 2306033@kiit.ac.in
 Requires-Dist: numpy
 Requires-Dist: pandas
-Requires-Dist: scikit-learn
+Requires-Dist: scikit-learn==1.3.2
 Requires-Dist: seaborn
 Requires-Dist: matplotlib
 Requires-Dist: catboost
